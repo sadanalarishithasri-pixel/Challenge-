@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AgriConnect Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      background: #f4f6f7;
+    }
+    header {
+      background-color: #2e7d32;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #388e3c;
+    }
+    nav button {
+      background: none;
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    nav button:hover {
+      background: #2e7d32;
+    }
+    section {
+      display: none;
+      padding: 20px;
+    }
+    section.active {
+      display: block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌾 AgriConnect Dashboard</h1>
+    <p>Smart Farming Portal</p>
+  </header>
+
+  <nav>
+    <button onclick="showTab('soil')">Soil Health (IoT)</button>
+    <button onclick="showTab('market')">Farmer-to-Buyer</button>
+    <button onclick="showTab('prices')">Crop Prices</button>
+    <button onclick="showTab('weather')">Live Weather Alerts</button>
+  </nav>
+
+  <main>
+    <!-- Soil Health Analysis -->
+    <section id="soil" class="active">
+      <h2>Soil Health Analysis (IoT)</h2>
+      <div class="card">
+        <p><strong>Soil Moisture:</strong> <span id="moisture">--</span>%</p>
+        <p><strong>pH Level:</strong> <span id="ph">--</span></p>
+        <p><strong>Temperature:</strong> <span id="temperature">--</span>°C</p>
+      </div>
+    </section>
+
+    <!-- Farmer to Buyer -->
+    <section id="market">
+      <h2>Farmer-to-Buyer Platform</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Farmer</th>
+            <th>Crop</th>
+            <th>Quantity</th>
+            <th>Contact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ravi Kumar</td>
+            <td>Tomatoes</td>
+            <td>500 kg</td>
+            <td>+91-9876543210</td>
+          </tr>
+          <tr>
+            <td>Sita Devi</td>
+            <td>Wheat</td>
+            <td>1,200 kg</td>
+            <td>+91-9123456789</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Crop Prices -->
+    <section id="prices">
+      <h2>Crop Price Tracking</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Crop</th>
+            <th>Market</th>
+            <th>Price (₹/kg)</th>
+          </tr>
+        </thead>
+        <tbody id="priceTable">
+          <tr>
+            <td>Rice</td>
+            <td>Mumbai</td>
+            <td>₹32</td>
+          </tr>
+          <tr>
+            <td>Wheat</td>
+            <td>Delhi</td>
+            <td>₹28</td>
+          </tr>
+          <tr>
+            <td>Pulses</td>
+            <td>Hyderabad</td>
+            <td>₹65</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Weather Alerts -->
+    <section id="weather">
+      <h2>Live Weather Alerts</h2>
+      <div class="card">
+        <p><strong>Location:</strong> <span id="location">Loading...</span></p>
+        <p><strong>Temperature:</strong> <span id="weatherTemp">--</span>°C</p>
+        <p><strong>Condition:</strong> <span id="weatherDesc">--</span></p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Tab control
+    function showTab(id) {
+      document.querySelectorAll('section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+    }
+
+    // Simulate IoT Soil Data
+    function updateSoilData() {
+      document.getElementById('moisture').textContent = (Math.random() * 100).toFixed(1);
+      document.getElementById('ph').textContent = (5 + Math.random() * 3).toFixed(2);
+      document.getElementById('temperature').textContent = (20 + Math.random() * 10).toFixed(1);
+    }
+    setInterval(updateSoilData, 3000); // Update every 3 sec
+    updateSoilData();
+
+    // Crop Price Auto-Update Simulation
+    function updateCropPrices() {
+      const rows = document.querySelectorAll("#priceTable tr");
+      rows.forEach(row => {
+        const priceCell = row.children[2];
+        let basePrice = parseInt(priceCell.textContent.replace("₹", ""));
+        let fluctuation = Math.floor(Math.random() * 5 - 2); // -2 to +2
+        priceCell.textContent = "₹" + Math.max(1, basePrice + fluctuation);
+      });
+    }
+    setInterval(updateCropPrices, 5000);
+
+    // Weather API (placeholder for real data)
+    async function getWeather() {
+      const locationSpan = document.getElementById("location");
+      const tempSpan = document.getElementById("weatherTemp");
+      const descSpan = document.getElementById("weatherDesc");
+
+      try {
+        // Example: OpenWeatherMap free API
+        const apiKey = "YOUR_API_KEY"; // ← replace with your OpenWeatherMap API key
+        const city = "Delhi";
+        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`);
+        const data = await res.json();
+
+        locationSpan.textContent = city;
+        tempSpan.textContent = data.main.temp.toFixed(1);
+        descSpan.textContent = data.weather[0].description;
+      } catch (e) {
+        locationSpan.textContent = "Error fetching weather";
+        descSpan.textContent = "Check API Key";
+      }
+    }
+
+    getWeather();
+  </script>
+</body>
+</html>
